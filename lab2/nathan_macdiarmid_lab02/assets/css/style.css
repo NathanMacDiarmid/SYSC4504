@@ -1,0 +1,57 @@
+body {
+    background-color: #E0B0FF;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: medium;
+}
+
+header {
+    text-align: center;
+}
+
+header ul {
+    display: block;
+    list-style-type: none;
+    overflow: hidden;
+    background-color: bisque;
+    a {
+        text-decoration: none;
+    }
+}
+
+header li {
+    float: left;
+    padding: 14px 16px;
+}
+
+header li:hover {
+    background-color: cadetblue;
+}
+
+img {
+    width: 500px;
+    height: 500px;
+}
+
+.welcome {
+    background-color: #A7C7E7;
+}
+
+.history {
+    margin: 0 5% 0 5%;
+    padding: 0 1% 0 1%;
+    border: 1px solid black;
+}
+
+.versions {
+    margin: 2% 5% 0 5%;
+    padding: 0 1% 1% 1%;
+    border: 1px solid black;
+}
+
+.versions li {
+    color: blueviolet;
+}
+
+.bodyHeader {
+    text-decoration: underline overline;
+}
