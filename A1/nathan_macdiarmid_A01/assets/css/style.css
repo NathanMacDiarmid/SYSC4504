@@ -38,13 +38,42 @@ header p {
 /* main article styling */
 main {
   background-color: white;
+  position: relative;
+}
+
+nav, .userInfo {
+  position: absolute;
+  width: 12%;
+  height: 90vh;
+  background-color: #919191;
+}
+
+nav {
+  margin-left: 3%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  a {
+    padding-top: 7%;
+    padding-bottom: 7%;
+    color: black;
+    text-decoration: none;
+  }
+
+  a:hover {
+    color: white;
+    background-color: #4b4b4b;
+  }
+}
+
+.userInfo {
+  margin-left: 85%;
 }
 
 section {
   margin-left: 16%;
-  padding-top: 10px;
   width: 68%;
-  float: left;
+  position: absolute;
 }
 
 /* Form style */
