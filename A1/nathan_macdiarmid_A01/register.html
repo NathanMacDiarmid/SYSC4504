@@ -53,10 +53,36 @@
    <main>
       <section>
          <h2>Register a new profile</h2>
-         <form>
+         <form action="https://ramisabouni.com/sysc4504/process_register.php" method="post">
             <fieldset>
-               <legend><span>Personal information</span></legend>
-
+               <legend>
+                  <span>Personal Information</span>
+               </legend>
+               <label for="first_name" class="formInput">First Name:</label>
+               <input name="first_name" id="first_name" type="text">
+               <label for="last_name">Last Name:</label>
+               <input name="last_name" id="last_name" type="text">
+               <label for="DOB">DOB:</label>
+               <input name="DOB" id="DOB" type="text">
+               <div class="pageHeader">
+                  <span>Profile Information</span>
+               </div>
+               <label for="student_email" class="formInput">Email:</label>
+               <input name="student_email" id="student_email" type="text">
+               <br>
+               <label for="program" class="formInput">Program:</label>
+               <select name="program" id="program">
+                  <option>Choose Program</option>
+                  <option>Computer Systems Engineering</option>
+                  <option>Software Engineering</option>
+                  <option>Communications Engineering</option>
+                  <option>Biomedical and Electrical Engineering</option>
+                  <option>Electrical Engineering</option>
+                  <option>Special</option>
+               </select>
+               <br>
+               <input type="submit" value="Register">
+               <input type="reset">
             </fieldset>
          </form>
       </section>
