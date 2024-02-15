@@ -59,7 +59,6 @@ nav {
     color: black;
     text-decoration: none;
   }
-
   a:hover {
     color: white;
     background-color: #4b4b4b;
@@ -74,15 +73,16 @@ nav {
   align-items: center;
 }
 
-.userInfo > * {
+.userInfo img {
   width: 50%;
   padding-top: 7%;
 }
 
-.overflow {
+.userInfo > * {
+  text-wrap: wrap;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  padding-top: 7%;
+  width: 90%;
 }
 
 section {
