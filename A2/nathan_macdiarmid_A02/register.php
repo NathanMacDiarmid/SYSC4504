@@ -8,6 +8,60 @@
    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
+<?php
+if (isset ($_POST["submit"])) {
+   $first_name = $_POST["first_name"];
+   $last_name = $_POST["last_name"];
+   $dob = $_POST["DOB"];
+   $student_email = $_POST["student_email"];
+   $program = $_POST["program"];
+
+   $servername = "localhost";
+   $username = "root";
+   $password = "";
+   $dbname = "nathan_macdiarmid_syscx";
+   $conn = mysqli_connect($servername, $username, $password, $dbname);
+
+   if (!$conn) {
+      echo "Connection error: " . mysqli_connect_error();
+   }
+
+   $sql = "insert into users_info (student_email, first_name, last_name, dob) values ('$student_email', '$first_name', '$last_name', '$dob')";
+
+   if (!mysqli_query($conn, $sql)) {
+      echo "SQL Error: " . mysqli_error($conn);
+   }
+
+   $get_all_id = "select student_id from users_info";
+
+   $result = mysqli_query($conn, $get_all_id);
+   $final_result = mysqli_fetch_all($result, MYSQLI_ASSOC);
+   $student_id = end($final_result)["student_id"];
+
+   $sql = "insert into users_program values ('$student_id', '$program')";
+
+   if (!mysqli_query($conn, $sql)) {
+      echo "SQL Error: " . mysqli_error($conn);
+   }
+
+   $sql = "insert into users_avatar values ('$student_id', NULL)";
+
+   if (!mysqli_query($conn, $sql)) {
+      echo "SQL Error: " . mysqli_error($conn);
+   }
+
+   $sql = "insert into users_address values ('$student_id', NULL, NULL, NULL, NULL, NULL)";
+
+   if (!mysqli_query($conn, $sql)) {
+      echo "SQL Error: " . mysqli_error($conn);
+   }
+
+   header('Location: profile.php');
+
+   mysqli_close($conn);
+}
+?>
+
 <body>
    <header>
       <h1>SYSCX</h1>
@@ -39,7 +93,7 @@
       <h3>
          Nathan MacDiarmid
       </h3>
-      <img src="/A1/nathan_macdiarmid_A01/images/img_avatar3.png" alt="Profile Photo">
+      <img src="images/img_avatar3.png" alt="Profile Photo">
       <h3>
          Email:
       </h3>
@@ -53,7 +107,7 @@
    <main>
       <section>
          <h2>Register a new profile</h2>
-         <form action="https://ramisabouni.com/sysc4504/process_register.php" method="post">
+         <form action="" method="post">
             <fieldset>
                <legend>
                   <span>Personal Information</span>
@@ -63,7 +117,7 @@
                <label for="last_name">Last Name:</label>
                <input name="last_name" id="last_name" type="text">
                <label for="DOB">DOB:</label>
-               <input name="DOB" id="DOB" type="text">
+               <input name="DOB" id="DOB" type="date">
                <div class="pageHeader">
                   <span>Profile Information</span>
                </div>
@@ -81,7 +135,7 @@
                   <option>Special</option>
                </select>
                <br>
-               <input type="submit" value="Register">
+               <input name="submit" type="submit" value="Register">
                <input type="reset">
             </fieldset>
          </form>

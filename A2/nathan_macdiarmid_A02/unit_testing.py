@@ -1,5 +1,5 @@
-"""
-Unit testing A01
+'''
+Unit testing A02
 - Install selenium (for unit testing webpages)
 pip install selenium
 pip3 install selenium
@@ -9,24 +9,14 @@ pip3 install selenium
 pip install mysql-connector-python
 pip3 install mysql-connector-python
 
-- Copy the file "A01_unit_testing.py to your assignment's project folder:
-    
-- If you don't have Firefox, search for this line and change it from 
-        driver = webdriver.Firefox()
-- to this for Chrome browser
-        driver = webdriver.Chrome()
-                
-Run the code and your grade will be shown in the terminal.
-
-Author: Dr. Rami Sabouni, Systems and Computer Engineering, Carleton University
-Version 2.1: February 13, 2024
-"""
-
+'''
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
-import os
+
+from sql_import import submit_sql, drop_table
 import time
+
 
 # fill register form
 
@@ -100,13 +90,33 @@ def fill_field_index(field_details: tuple[str, str]):
     element.send_keys(field_details[1])
 
 
-def get_result() -> list[str]:
-    """Return the results retrieved from the posts in the index.php page
-
-    Returns:
-        list[str]: List of results retrieved from the posts.
+def get_register_result(field_name: str) -> str:
+    """Return the results retrieved from the field_name
     """
-    elements = driver.find_elements(By.TAG_NAME, "p")
+    element = driver.find_element("name", field_name)
+    return element.get_attribute("value")
+
+
+def get_profile_result(field_name: str) -> str:
+    """Return the results retrieved from the field_name
+    """
+    if field_name == "avatar":
+        elements = driver.find_elements("name", field_name)
+        i = 0
+        for e in elements:
+            selected = e.is_selected()
+            if selected and i == 2:
+                return str(i)
+            i += 1
+    else:
+        element = driver.find_element("name", field_name)
+        return element.get_attribute("value")
+
+
+def get_index_result() -> list[str]:
+    """Return the results retrieved from the posts
+    """
+    elements = driver.find_elements(By.TAG_NAME, "details")
     result = []
     for element in elements:
         result += [element.get_attribute("innerHTML")]
@@ -134,14 +144,7 @@ def unit_test(actual: str, expected: str) -> str:
 
 
 def unit_test_index(actual: list[str], expected: str) -> str:
-    """Test if the actual value contains the expected value
-
-    Args:
-        actual (list[str]): The actual list of values to be tested.
-        expected (str): The expected value.
-
-    Returns:
-        str: "Pass" if the expected value is present, "Fail" otherwise.
+    """Test if the actual value matches the expected value
     """
     global num_pass, num_fail
 
@@ -168,26 +171,46 @@ def partial(lst: list[str], query: str):
 
 # mian code
 if __name__ == "__main__":
-    print("\n" + "*" * 10 + "\n")
-    # to get the current working directory
-    directory = "file://" + os.getcwd() + "/"
 
-    # HTML files to be tested
-    file_names = ["index.html", "profile.html", "register.html"]
+    # Files to be tested
+    file_names = ["nathan_macdiarmid_a02.sql", "register.php",
+                  "profile.php", "index.php"]
 
-    # read the names of the .php files
+    # Update according to where your website is located
+    URL = "http://localhost/SYSC4504_Labs/nathan_macdiarmid_a02/"
+
+    count = 0
+    database_name = ""
     grade = 0
-
     for file in file_names:
-        if "register.html" in file:
+        if ".sql" in file:
+            # firstname_lastname_a02.sql
+            try:
+                print("\n************ Results for .sql file ************\n")
+
+                # create the database and tables
+                submit_sql(file)
+                print("Database creation result: 2.5/2.5")
+                grade += 2.5
+            except:
+                print("Failed importing database!")
+                print("Database creation result: 0.0/2.5")
+                grade += 0
+
+            # Results for this test
+            print(
+                "\nSQL statements results: {0} / 100\n".format((grade/2.5) * 100))
+        elif "register.php" in file:
             # Testing register.html
+            num_pass = 0
+            num_fail = 0
             try:
                 # open page in a browser
-                driver = webdriver.Chrome()  # change this to Chrome if you don't have Firefox
+                driver = webdriver.Firefox()  # change this to Chrome if you don't have Firefox
 
-                driver.get(directory + file)
+                driver.get(URL+file)
                 driver.implicitly_wait(10)
-                register_fields = {"first_name": "John", "last_name": "Snow", "DOB": "1010-10-10",
+                register_fields = {"first_name": "John", "last_name": "Snow", "DOB": "001010-10-10",
                                    "student_email": "johnsnow@mail.com", "program": "Computer Systems Engineering"}
 
                 # Fill the form
@@ -195,86 +218,67 @@ if __name__ == "__main__":
 
                 # Test if the filled form worked
                 print("Score for {0}: ".format(file))
-                num_pass = 0
-                num_fail = 0
 
-                content_start = ["<strong>First Name: </strong>", "<strong>Last Name: </strong>",
-                                 "<strong>Date of Birth: </strong>", "<strong>Student Email: </strong>",
-                                 "<strong>Program: </strong>"]
-
-                i = 0
-                time.sleep(2)
-                results = get_result()
+                time.sleep(5)
                 for item in register_fields.items():
-                    test = partial(results, content_start[i] + item[1])
-                    if test:
-                        print("testing field {0}: {1}".format(item[0], unit_test_index(
-                            partial(results, content_start[i] + item[1])[0], content_start[i] + item[1])))
-                    i += 1
-
-                print("In register.html:\n\t Number of tests {0}: {1} passed and {2} failed.".format(
+                    if item[0] == "DOB":
+                        print("testing field {0}: {1}".format(
+                            item[0], unit_test(get_register_result(item[0]), item[1][2::])))
+                    else:
+                        print("testing field {0}: {1}".format(
+                            item[0], unit_test(get_register_result(item[0]), item[1])))
+                print("In register.php:\n\t Number of tests {0}: {1} passed and {2} failed.".format(
                     num_pass+num_fail, num_pass, num_fail))
             except:
                 print("Fail: ", file)
 
             # Results this test
-            print("\nRegister results: {0} / 100\n".format((num_pass/5) * 100))
-            grade += (num_pass/5) / 3
-            driver.close()
+            print("Register results: {0}/1.5".format((num_pass/5)*1.5))
+            grade += (num_pass/5) * 1.5
 
-        elif "profile.html" in file:
-            # Testing profile.html
+        elif "profile.php" in file:
+            # Testing profile.php
+            num_pass = 0
+            num_fail = 0
             try:
                 # open page in a browser
-                driver = webdriver.Chrome()  # change this to Chrome if you don't have Firefox
-
-                driver.get(directory + file)
-                profile_fields = {"first_name": "john", "last_name": "snow", "DOB": "1011-10-10", "street_number": "1234", "street_name": "colonel", "city": "The North",
+                driver.get(URL+file)
+                driver.implicitly_wait(5)
+                driver.refresh()
+                profile_fields = {"first_name": "john", "last_name": "snow", "DOB": "001011-10-10", "street_number": "1234", "street_name": "colonel", "city": "The North",
                                   "province": "ON", "postal_code": "k1s5b6", "student_email": "john.snow@mail.com", "program": "Electrical Engineering", "avatar": "2"}
 
                 # Fill the form
                 fill_field_profile(list(profile_fields.values()))
 
                 # Test if the filled form worked
-                print("Score for {0}: ".format(file))
-                num_pass = 0
-                num_fail = 0
+                print("Score for {0}: ".format(driver.current_url))
 
-                content_start = ["<strong>First Name: </strong>", "<strong>Last Name: </strong>",
-                                 "<strong>Date of Birth: </strong>", "<strong>Street Number: </strong>",
-                                 "<strong>Street Name: </strong>", "<strong>City: </strong>",
-                                 "<strong>Province: </strong>", "<strong>Postal Code: </strong>",
-                                 "<strong>Student Email: </strong>", "<strong>Program: </strong>",
-                                 "<strong>Avatar: </strong>"]
-                i = 0
-
-                time.sleep(2)
-                results = get_result()
+                time.sleep(5)
                 for item in profile_fields.items():
-                    test = partial(results, content_start[i] + item[1])
-                    if test:
-                        print("testing field {0}: {1}".format(item[0], unit_test_index(
-                            partial(results, content_start[i] + item[1])[0], content_start[i] + item[1])))
-                    i += 1
-
-                print("In profile.html:\n\t Number of tests {0}: {1} passed and {2} failed.".format(
+                    if item[0] == "DOB":
+                        print("testing field {0}: {1}".format(
+                            item[0], unit_test(get_register_result(item[0]), item[1][2::])))
+                    else:
+                        print("testing field {0}: {1}".format(
+                            item[0], unit_test(get_profile_result(item[0]), item[1])))
+                print("In profile.php:\n\t Number of tests {0}: {1} passed and {2} failed.".format(
                     num_pass+num_fail, num_pass, num_fail))
             except:
                 print("Fail: ", file)
 
             # Results this test
-            print("\nProfile results: {0} / 100\n".format((num_pass/11) * 100))
-            grade += (num_pass/11) / 3
-            driver.close()
-
-        elif "index.html" in file:
-            # Testing index.html
+            print("Profile results: {0}/2".format((num_pass/11)*2))
+            grade += (num_pass/11) * 2
+        elif "index.php" in file:
+            # Testing index.php
+            num_pass = 0
+            num_fail = 0
             try:
-                driver = webdriver.Chrome()  # change this to Chrome if you don't have Firefox
-
-                print(directory + file)
-                driver.get(directory + file)
-                index_fields = {"new_post1": "This is post 1"}
+                driver.get(URL + file)
+                driver.implicitly_wait(5)
+                index_fields = {"new_post1": "This is post 1", "new_post2": "This is post 2", "new_post3": "This is post 3",
+                                "new_post4": "This is post 4", "new_post5": "This is post 5", "new_post6": "This is post 6"}
 
                 # Fill the form
                 for item in index_fields.items():
@@ -284,26 +288,24 @@ if __name__ == "__main__":
                     submit.click()
 
                 # Test if the filled form worked
-                print("Score for {0}: ".format(file))
-                num_pass = 0
-                num_fail = 0
+                print("Score for {0}: ".format(driver.current_url))
 
-                results = get_result()
-                content_start = "<strong>The new post is: </strong>"
+                time.sleep(5)
+                results = get_index_result()
                 for item in index_fields.items():
-                    test = partial(results, content_start + item[1])
+                    test = partial(results, item[1])
                     if test:
-                        print("testing field {0}: {1}".format(item[0], unit_test_index(
-                            partial(results, content_start + item[1])[0], content_start + item[1])))
+                        print("testing field {0}: {1}".format(
+                            item[0], unit_test_index(partial(results, item[1])[0], item[1])))
                 print("In index.php:\n\t Number of tests {0}: {1} passed and {2} failed.".format(
                     num_pass+num_fail, num_pass, num_fail))
             except:
                 print("Fail: ", file)
 
             # Results this test
-            print("\nIndex results: {0} / 100\n".format((num_pass * 100)))
-            grade += num_pass / 3
+            print("Index results: {0}/1.5".format((num_pass/5)*1.5))
+            grade += num_pass / 5 * 1.5
             driver.close()
 
-    # Final Assignment Results
-    print("Final A01 score is: {0} / 100". format(grade * 100))
+            # Final Assignment Results
+    print("Final A02 score is: {0}/7.5". format(grade))
