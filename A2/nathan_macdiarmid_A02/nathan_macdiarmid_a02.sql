@@ -29,7 +29,7 @@ USE nathan_macdiarmid_syscbook;
 -- Table structure for table `users_address`
 --
 
-CREATE TABLE `users_address` (
+CREATE TABLE IF NOT EXISTS `users_address` (
   `student_id` int(10) DEFAULT NULL,
   `street_number` varchar(5) DEFAULT NULL,
   `street_name` varchar(150) DEFAULT NULL,
@@ -48,7 +48,7 @@ CREATE TABLE `users_address` (
 -- Table structure for table `users_avatar`
 --
 
-CREATE TABLE `users_avatar` (
+CREATE TABLE IF NOT EXISTS `users_avatar` (
   `student_id` int(10) DEFAULT NULL,
   `avatar` varchar(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -63,7 +63,7 @@ CREATE TABLE `users_avatar` (
 -- Table structure for table `users_info`
 --
 
-CREATE TABLE `users_info` (
+CREATE TABLE IF NOT EXISTS `users_info` (
   `student_id` int(10) NOT NULL,
   `student_email` varchar(150) DEFAULT NULL,
   `first_name` varchar(150) DEFAULT NULL,
@@ -81,7 +81,7 @@ CREATE TABLE `users_info` (
 -- Table structure for table `users_posts`
 --
 
-CREATE TABLE `users_posts` (
+CREATE TABLE IF NOT EXISTS `users_posts` (
   `post_id` int(11) NOT NULL,
   `student_id` int(10) DEFAULT NULL,
   `new_post` text DEFAULT NULL,
@@ -98,7 +98,7 @@ CREATE TABLE `users_posts` (
 -- Table structure for table `users_program`
 --
 
-CREATE TABLE `users_program` (
+CREATE TABLE IF NOT EXISTS `users_program` (
   `student_id` int(10) DEFAULT NULL,
   `Program` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
